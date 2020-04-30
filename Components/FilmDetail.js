@@ -9,6 +9,7 @@ import moment from 'moment'
 import numeral from 'numeral'
 
 import {connect} from 'react-redux'
+import EnlargeShrink from '../Animations/EnlargeShrink'
 
 class FilmDetail extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -92,15 +93,20 @@ class FilmDetail extends React.Component {
 
     _displayFavoriteImage() {
         var sourceImage = require('../Images/ic_favorite_border.png')
+        var shouldEnlarge = false // Par défaut, si le film n'est pas en favoris, on veut qu'au clic sur le bouton, celui-ci s'agrandisse => shouldEnlarge à true        
         if (this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !==-1) {
             // film dans les favoris
             sourceImage = require('../Images/ic_favorite.png')
+            shouldEnlarge = true // Si le film est dans les favoris, on veut qu'au clic sur le bouton, celui-ci se rétrécisse => shouldEnlarge à false            
         }
         return(
-            <Image 
-                style={styles.favorite_image}
-                source={sourceImage}
-            />
+            <EnlargeShrink
+                shouldEnlarge={shouldEnlarge}>
+                <Image
+                    style={styles.favorite_image}
+                    source={sourceImage}
+                />
+            </EnlargeShrink>
         )
     }
 
@@ -223,8 +229,9 @@ const styles = StyleSheet.create(
             alignItems: 'center'    // Alignement des components enfants sur l'axe secondaire, X ici
         },
         favorite_image: {
-            width: 40,
-            height: 40
+            flex: 1,
+            width: null,
+            height: null
         },
         share_touchable_floatingactionbutton: {
             position: 'absolute',
